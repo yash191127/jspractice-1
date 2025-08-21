@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive SVG Drawing Tool with Mouse Event Handlers</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      border: 2px solid #000;
+      width: 600px;
+      margin: 20px auto;
+      padding: 10px;
+    }
+    svg {
+      border: 1px solid #000;
+      background: #f9f9f9;
+      width: 100%;
+      height: 400px;
+      cursor: crosshair;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h3>SVG Drawing Tool</h3>
+    <svg id="drawingCanvas"></svg>
+  </div>
+
+  <script>
+    const svg = document.getElementById("drawingCanvas");
+    let isDrawing = false;
+    let currentLine = null;
+
+    // Mouse down: start a new line
+    svg.addEventListener("mousedown", (e) => {
+      isDrawing = true;
+      const point = getMousePosition(e);
+      currentLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      currentLine.setAttribute("x1", point.x);
+      currentLine.setAttribute("y1", point.y);
+      currentLine.setAttribute("x2", point.x);
+      currentLine.setAttribute("y2", point.y);
+      currentLine.setAttribute("stroke", "blue");
+      currentLine.setAttribute("stroke-width", "2");
+      svg.appendChild(currentLine);
+    });
+
+    // Mouse move: update the line dynamically
+    svg.addEventListener("mousemove", (e) => {
+      if (!isDrawing) return;
+      const point = getMousePosition(e);
+      currentLine.setAttribute("x2", point.x);
+      currentLine.setAttribute("y2", point.y);
+    });
+
+    // Mouse up: finish the drawing
+    svg.addEventListener("mouseup", () => {
+      isDrawing = false;
+      currentLine = null;
+    });
+
+    // Helper function to get mouse position in SVG coordinates
+    function getMousePosition(event) {
+      const rect = svg.getBoundingClientRect();
+      return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+      };
+    }
+  </script>
+</body>
+</html>
